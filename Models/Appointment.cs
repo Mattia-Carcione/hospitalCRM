@@ -108,7 +108,7 @@ namespace Models
         /// <summary>
         /// Sets to false the cancellation state of the appointment.
         /// </summary>
-        public void Schedule(Patient patient)
+        public void Schedule()
         {
             IsCanceled = false;
         }
