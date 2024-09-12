@@ -63,10 +63,12 @@ namespace Context
                 entity.HasKey(e => e.Id);
                 entity.Property(e => e.Date).IsRequired();
                 entity.Property(e => e.Reason).HasMaxLength(400);
+                entity.Property(e => e.PatientId).IsRequired();
                 entity.HasOne(e => e.Patient)
                       .WithMany()
                       .HasForeignKey(e => e.PatientId)
                       .OnDelete(DeleteBehavior.Cascade);
+                entity.Property(e => e.StaffId).IsRequired();
                 entity.HasOne(e => e.Staff)
                       .WithMany()
                       .HasForeignKey(e => e.StaffId)
@@ -83,7 +85,22 @@ namespace Context
                 entity.Property(e => e.Role).IsRequired().HasMaxLength(50);
                 entity.Property(e => e.Email).IsRequired().HasMaxLength(100);
                 entity.Property(e => e.PhoneNumber).HasMaxLength(15);
-                entity.Property(e => e.Department).HasMaxLength(100);
+                entity.Property(e => e.DepartmentId).IsRequired();
+                entity.HasOne(e => e.Department)
+                      .WithMany(d => d.Staffs)
+                      .HasForeignKey(e => e.DepartmentId)
+                      .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            modelBuilder.Entity<Department>(entity =>
+            {
+                entity.ToTable("Departments");
+                entity.HasKey(e => e.Id);
+                entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
+                entity.HasMany(e => e.Staffs)
+                      .WithOne(s => s.Department)
+                      .HasForeignKey(s => s.DepartmentId)
+                      .OnDelete(DeleteBehavior.Cascade);
             });
 
             // MedicalRecord configuration
@@ -94,6 +111,7 @@ namespace Context
                 entity.Property(e => e.RecordDate).IsRequired();
                 entity.Property(e => e.Diagnosis).HasMaxLength(400);
                 entity.Property(e => e.Treatment).HasMaxLength(400);
+                entity.Property(e => e.PatientId).IsRequired();
                 entity.HasOne(e => e.Patient)
                       .WithMany()
                       .HasForeignKey(e => e.PatientId)
@@ -115,11 +133,20 @@ namespace Context
 
             // Seeding Staff
             modelBuilder.Entity<Staff>().HasData(
-                new Staff { Id = 101, FirstName = "Dr. Carlo", LastName = "Marini", Role = "Medico", Email = "carlo.marini@ospedale.com", PhoneNumber = "+39 02 3456789", Department = "Cardiologia" },
-                new Staff { Id = 102, FirstName = "Dr. Lucia", LastName = "Galli", Role = "Medico", Email = "lucia.galli@ospedale.com", PhoneNumber = "+39 02 4567890", Department = "Oncologia" },
-                new Staff { Id = 103, FirstName = "Dr. Andrea", LastName = "Ferri", Role = "Medico", Email = "andrea.ferri@ospedale.com", PhoneNumber = "+39 011 2345678", Department = "Ortopedia" },
-                new Staff { Id = 104, FirstName = "Dr. Marta", LastName = "Morelli", Role = "Chirurgo", Email = "marta.morelli@ospedale.com", PhoneNumber = "+39 055 6789012", Department = "Chirurgia" },
-                new Staff { Id = 105, FirstName = "Dr. Giovanni", LastName = "Romano", Role = "Medico", Email = "giovanni.romano@ospedale.com", PhoneNumber = "+39 081 3456789", Department = "Neurologia" }
+                new Staff { Id = 101, FirstName = "Dr. Carlo", LastName = "Marini", Role = "Medico", Email = "carlo.marini@ospedale.com", PhoneNumber = "+39 02 3456789", DepartmentId = 1 },
+                new Staff { Id = 102, FirstName = "Dr. Lucia", LastName = "Galli", Role = "Medico", Email = "lucia.galli@ospedale.com", PhoneNumber = "+39 02 4567890", DepartmentId = 2 },
+                new Staff { Id = 103, FirstName = "Dr. Andrea", LastName = "Ferri", Role = "Medico", Email = "andrea.ferri@ospedale.com", PhoneNumber = "+39 011 2345678", DepartmentId = 3 },
+                new Staff { Id = 104, FirstName = "Dr. Marta", LastName = "Morelli", Role = "Chirurgo", Email = "marta.morelli@ospedale.com", PhoneNumber = "+39 055 6789012", DepartmentId = 4 },
+                new Staff { Id = 105, FirstName = "Dr. Giovanni", LastName = "Romano", Role = "Medico", Email = "giovanni.romano@ospedale.com", PhoneNumber = "+39 081 3456789", DepartmentId = 5 }
+            );
+
+            // Seeding Department
+            modelBuilder.Entity<Department>().HasData(
+                new Department { Id = 1, Name = "Cardiologia" },
+                new Department { Id = 2, Name = "Oncologia" },
+                new Department { Id = 3, Name = "Ortopedia" },
+                new Department { Id = 4, Name = "Chirurgia" },
+                new Department { Id = 5, Name = "Neurologia" }
             );
 
             // Seeding Appointment

@@ -64,7 +64,7 @@ namespace Models
         public int PatientId { get; set; }
 
         /// <summary>
-        /// The medical record-related patient.
+        /// The Appointment-related patient.
         /// </summary>
         /// <remarks>
         /// Representing the relationtship between <see cref="Patient"/> and <see cref="Appointment"/>

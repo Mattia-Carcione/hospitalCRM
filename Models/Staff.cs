@@ -24,6 +24,16 @@
 //| - PhoneNumber     |              +-------------------+
 //| - Department      |
 //+-------------------+
+//          |
+//          |*
+//          |
+//          1
+//+------------------+1
+//|  Department       |     
+//+-------------------+  
+//| - Id              |
+//| - Name            |
+//+-------------------+
 
 
 
@@ -76,10 +86,21 @@ namespace Models
         public string Email { get; set; } = string.Empty;
 
         /// <summary>
+        /// The identifier of the department.
+        /// </summary>
+        /// <remarks>
+        /// Representing the relationtship between <see cref="Department"/> and <see cref="Appointment"/>
+        /// </remarks>
+        [Required]
+        public int DepartmentId { get; set; }
+
+        /// <summary>
         /// The department of the staff.
         /// </summary>
-        [MaxLength(100)]
-        public string Department { get; set; } = string.Empty;
+        /// <remarks>
+        /// Representing the relationship between <see cref="Department"/> and <see cref="Staff"/>
+        /// </remarks>
+        public Department? Department { get; set; }
 
         /// <summary>
         /// The staff-related appointments.
